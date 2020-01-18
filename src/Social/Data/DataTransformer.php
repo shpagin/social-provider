@@ -6,7 +6,7 @@ namespace CreatorIq\Social\Data;
 use CreatorIq\Social\Data\Transformer\DataTransformerInterface;
 use CreatorIq\Social\Exception\UnsupportedTypeException;
 use CreatorIq\Social\Model\ModelInterface;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class DataTransformer
 {
@@ -16,16 +16,16 @@ class DataTransformer
     private $transformers = [];
 
     /**
-     * @var Serializer
+     * @var DenormalizerInterface
      */
-    private $serializer;
+    private $denormalizer;
 
     /**
-     * @param Serializer $serializer
+     * @param DenormalizerInterface $denormalizer
      */
-    public function __construct(Serializer $serializer)
+    public function __construct(DenormalizerInterface $denormalizer)
     {
-        $this->serializer = $serializer;
+        $this->denormalizer = $denormalizer;
     }
 
     /**
@@ -33,7 +33,7 @@ class DataTransformer
      */
     public function addTransformer(DataTransformerInterface $transformer): void
     {
-        $transformer->setDenormalizer($this->serializer);
+        $transformer->setDenormalizer($this->denormalizer);
 
         $this->transformers[] = $transformer;
     }
