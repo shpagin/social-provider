@@ -6,6 +6,7 @@ namespace CreatorIq\Social\Provider;
 use CreatorIq\Social\Data\DataTransformer;
 use CreatorIq\Social\Model\ModelInterface;
 use GuzzleHttp\Client as GuzzleClient;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
@@ -27,19 +28,27 @@ abstract class AbstractProvider
     protected $denormalizer;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @param GuzzleClient          $guzzleClient
      * @param DataTransformer       $transformer
      * @param DenormalizerInterface $denormalizer
+     * @param LoggerInterface       $logger
      */
     public function __construct(
         GuzzleClient $guzzleClient,
         DataTransformer $transformer,
-        DenormalizerInterface $denormalizer
+        DenormalizerInterface $denormalizer,
+        LoggerInterface $logger
     )
     {
         $this->guzzleClient = $guzzleClient;
         $this->transformer = $transformer;
         $this->denormalizer = $denormalizer;
+        $this->logger = $logger;
     }
 
     /**

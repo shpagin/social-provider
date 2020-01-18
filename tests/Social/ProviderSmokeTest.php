@@ -12,33 +12,33 @@ use CreatorIq\Social\Provider;
 use CreatorIq\Social\ProviderFactory;
 use GuzzleHttp\Client as GuzzleClient;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerTrait;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 /**
  * @covers Provider
  */
-class ProviderSmokeTest extends TestCase
+class ProviderSmokeTest extends TestCase implements LoggerInterface
 {
+    use LoggerTrait;
+
     /**
      * @var Provider
      */
     private $provider;
 
     /**
-     * @param string $name
-     * @param array  $data
-     * @param string $dataName
+     * @before
      */
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function before()
     {
-        parent::__construct($name, $data, $dataName);
-
         $guzzleClient = new GuzzleClient();
         $serializer = new Serializer([new ObjectNormalizer()]);
         $transformer = DataTransformerFactory::create();
 
-        $this->provider = ProviderFactory::create($guzzleClient, $transformer, $serializer);
+        $this->provider = ProviderFactory::create($guzzleClient, $transformer, $serializer, $this);
     }
 
     /**
@@ -64,5 +64,15 @@ class ProviderSmokeTest extends TestCase
             [InstagramAccount::class],
             [InstagramPost::class],
         ];
+    }
+
+    /**
+     * @param string $level
+     * @param string $message
+     * @param array  $context
+     */
+    public function log($level, $message, array $context = [])
+    {
+        printf("\n%s: %s\n", strtoupper($level), $message);
     }
 }

@@ -5,6 +5,7 @@ namespace CreatorIq\Social;
 
 use CreatorIq\Social\Data\DataTransformer;
 use GuzzleHttp\Client as GuzzleClient;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class ProviderFactory
@@ -27,18 +28,20 @@ class ProviderFactory
      * @param GuzzleClient          $guzzleClient
      * @param DataTransformer       $transformer
      * @param DenormalizerInterface $denormalizer
+     * @param LoggerInterface       $logger
      *
      * @return Provider
      */
     public static function create(
         GuzzleClient $guzzleClient,
         DataTransformer $transformer,
-        DenormalizerInterface $denormalizer
+        DenormalizerInterface $denormalizer,
+        LoggerInterface $logger
     ): Provider
     {
         $provider = new Provider();
         foreach (self::registered() as $type) {
-            $provider->addProvider(new $type($guzzleClient, $transformer, $denormalizer));
+            $provider->addProvider(new $type($guzzleClient, $transformer, $denormalizer, $logger));
         }
 
         return $provider;
