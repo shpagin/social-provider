@@ -4,9 +4,6 @@ declare(strict_types=1);
 namespace CreatorIq\Social\Data;
 
 use CreatorIq\Social\Data\Transformer\DataTransformerInterface;
-use CreatorIq\Social\Exception\UnsupportedTypeException;
-use CreatorIq\Social\Model\ModelInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class DataTransformer
 {
@@ -16,25 +13,10 @@ class DataTransformer
     private $transformers = [];
 
     /**
-     * @var DenormalizerInterface
-     */
-    private $denormalizer;
-
-    /**
-     * @param DenormalizerInterface $denormalizer
-     */
-    public function __construct(DenormalizerInterface $denormalizer)
-    {
-        $this->denormalizer = $denormalizer;
-    }
-
-    /**
      * @param DataTransformerInterface $transformer
      */
     public function addTransformer(DataTransformerInterface $transformer): void
     {
-        $transformer->setDenormalizer($this->denormalizer);
-
         $this->transformers[] = $transformer;
     }
 
@@ -42,18 +24,16 @@ class DataTransformer
      * @param array  $data
      * @param string $type
      *
-     * @return ModelInterface
-     *
-     * @throws UnsupportedTypeException
+     * @return array
      */
-    public function transform(array $data, string $type): ModelInterface
+    public function transform(array $data, string $type): array
     {
         foreach ($this->transformers as $transformer) {
-            if ($transformer->supports($type, $data)) {
-                return $transformer->transform($data, $type);
+            if ($transformer->supports($type)) {
+                return $transformer->transform($data);
             }
         }
 
-        throw new UnsupportedTypeException($type);
+        return $data;
     }
 }

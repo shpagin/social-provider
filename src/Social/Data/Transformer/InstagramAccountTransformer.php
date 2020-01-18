@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace CreatorIq\Social\Data\Transformer;
 
 use CreatorIq\Social\Model\InstagramAccount;
-use CreatorIq\Social\Model\ModelInterface;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerAwareTrait;
 
 class InstagramAccountTransformer implements DataTransformerInterface
@@ -14,30 +12,23 @@ class InstagramAccountTransformer implements DataTransformerInterface
 
     /**
      * @param string $type
-     * @param array  $context
      *
      * @return bool
      */
-    public function supports(string $type, array $context = []): bool
+    public function supports(string $type): bool
     {
         return InstagramAccount::class === $type;
     }
 
     /**
-     * @param array  $data
-     * @param string $type
+     * @param array $data
      *
-     * @return ModelInterface
-     *
-     * @throws ExceptionInterface
+     * @return array
      */
-    public function transform(array $data, string $type): ModelInterface
+    public function transform(array $data): array
     {
         // TODO: Implement data transformation for InstagramAccount.
 
-        /** @var InstagramAccount $model */
-        $model = $this->denormalizer->denormalize($data, $type);
-
-        return $model;
+        return $data;
     }
 }

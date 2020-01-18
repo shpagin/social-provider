@@ -3,30 +3,23 @@ declare(strict_types=1);
 
 namespace CreatorIq\Social;
 
-use CreatorIq\Social\Data\DataTransformer;
 use CreatorIq\Social\Model\ModelInterface;
-use CreatorIq\Social\Network\Client;
+use CreatorIq\Social\Provider\AbstractProvider;
+use InvalidArgumentException;
 
 class Provider
 {
     /**
-     * @var Client
+     * @var AbstractProvider[]
      */
-    private $client;
+    private $providers;
 
     /**
-     * @var DataTransformer
+     * @param AbstractProvider $provider
      */
-    private $transformer;
-
-    /**
-     * @param Client          $client
-     * @param DataTransformer $transformer
-     */
-    public function __construct(Client $client, DataTransformer $transformer)
+    public function addProvider(AbstractProvider $provider): void
     {
-        $this->client = $client;
-        $this->transformer = $transformer;
+        $this->providers[] = $provider;
     }
 
     /**
@@ -37,8 +30,12 @@ class Provider
      */
     public function get(string $identifier, string $type): ModelInterface
     {
-        $socialData = $this->client->get($identifier, $type);
+        foreach ($this->providers as $socialProvider) {
+            if ($socialProvider->supports($type)) {
+                return $socialProvider->get($identifier);
+            }
+        }
 
-        return $this->transformer->transform($socialData, $type);
+        throw new InvalidArgumentException('Unsupported class: '.$type);
     }
 }

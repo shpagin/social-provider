@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 namespace CreatorIq\Tests\Social;
 
-use CreatorIq\Social\Factory\ProviderFactory;
+use CreatorIq\Social\Data\DataTransformerFactory;
 use CreatorIq\Social\Model\InstagramAccount;
 use CreatorIq\Social\Model\InstagramPost;
 use CreatorIq\Social\Model\TwitterAccount;
 use CreatorIq\Social\Model\TwitterStatus;
 use CreatorIq\Social\Provider;
+use CreatorIq\Social\ProviderFactory;
 use GuzzleHttp\Client as GuzzleClient;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -35,8 +36,9 @@ class ProviderSmokeTest extends TestCase
 
         $guzzleClient = new GuzzleClient();
         $serializer = new Serializer([new ObjectNormalizer()]);
+        $transformer = DataTransformerFactory::create();
 
-        $this->provider = ProviderFactory::create($guzzleClient, $serializer);
+        $this->provider = ProviderFactory::create($guzzleClient, $transformer, $serializer);
     }
 
     /**
